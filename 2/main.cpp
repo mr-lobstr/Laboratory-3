@@ -39,9 +39,12 @@ void check_tests (ostream& out, int iterations)
 int main()
 {
     auto primes500 = table_primes_to(500);
-    int bitSize = 13, t = 5, count = 10;
-    int numsLen = (stringstream {} << pow(2, bitSize)).str().size();
+    int bitSize, t, count;
 
+    cin >> bitSize >> t >> count;
+
+    int numsLen = (stringstream {} << pow(2, bitSize)).str().size();
+    
     for (int i = 0; i < count; ++i)
     {
         auto [num, k] = procedure_Miller(primes500, bitSize, t);

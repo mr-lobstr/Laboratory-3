@@ -1,6 +1,12 @@
 #include "test_and_procedures.h"
 using namespace std;
 
+enum Number_is
+{
+    composite = false,
+    prime = true
+};
+
 bool test_Miller (const vector<long long>& primeDivisors, long long n, int t)
 {
     if (n == 2)
@@ -27,6 +33,7 @@ bool test_Miller (const vector<long long>& primeDivisors, long long n, int t)
         if (all_of(randNumbers.begin(), randNumbers.end(), pred))
             return Number_is::composite;
     }
+
     return Number_is::prime;
 }
 
@@ -49,11 +56,12 @@ bool test_Pocklington (const vector<long long>& primeDivisors_F, long long n, in
         };
 
         if (pow_mod(aRnd, n - 1, n) != 1)
-                return Number_is::composite;
+            return Number_is::composite;
 
         if (not any_of(primeDivisors_F.begin(), primeDivisors_F.end(), pred))
             return Number_is::prime;
     }
+
     return Number_is::composite;
 }
 
@@ -84,20 +92,21 @@ bool test_probability (long long n, int k)
 
         for (int j = 0; j < s - 1; ++j)
         {
-           x = pow_mod(x, 2, n);
+            x = pow_mod(x, 2, n);
 
-            if (x == 1 or x == n - 1)
+            if (x == 1)
+                return Number_is::composite;
+
+            if (x == n - 1)
                 break;
         }
-
-        if (x == 1 or x != n - 1)
-            return Number_is::composite;
     }
     
     return Number_is::prime;
 }
 
-pair<long long, int>
+
+pair <long long, int>
 procedure_Miller (const vector<long long>& primes, int bitSize, int t)
 {
     int count = 0;
@@ -107,12 +116,13 @@ procedure_Miller (const vector<long long>& primes, int bitSize, int t)
         auto [m, primeDivisors] = rand_num_factorisation(primes, bitSize - 1);
 
         long long n = 2 * m + 1;
-        if (m % 2 == 0)
+
+        if (m % 2 != 0)
         {
             primeDivisors.push_back(2);
         }
 
-        if (test_Miller(primeDivisors, n, 200))
+        if (test_Miller(primeDivisors, n, t))
             return make_pair(n, count);
 
         if (test_probability(n, 6))
@@ -121,7 +131,7 @@ procedure_Miller (const vector<long long>& primes, int bitSize, int t)
 }
 
 
-pair<long long, int>
+pair <long long, int>
 procedure_Pocklington (const vector<long long>& primes, int bitSize, int t)
 {
     int count = 0;
@@ -134,7 +144,7 @@ procedure_Pocklington (const vector<long long>& primes, int bitSize, int t)
 
         auto [F, primeDivisors] = rand_num_factorisation(primes, bitSizeF);
 
-        long long n = R*F + 1;
+        long long n = R * F + 1;
 
         if (test_Pocklington (primeDivisors, n, t))
             return make_pair (n, count);
@@ -145,11 +155,10 @@ procedure_Pocklington (const vector<long long>& primes, int bitSize, int t)
 }
 
 
-long long procedure_gost (long long q, int bitSize, double (*rand_01)())
+long long procedure_gost (long long q, int bitSize, double (*rand_01) ())
 {
     while (true)
     {
-        long long u = 0;
         double common = pow(2.0, bitSize - 1) / q;
         long long N = ceil(common) + ceil(common * rand_01());
 
@@ -157,7 +166,7 @@ long long procedure_gost (long long q, int bitSize, double (*rand_01)())
      
         for (long long u = 0; true; u += 2)
         {
-            auto p = (N + u) * q + 1;
+            long long p = (N + u) * q + 1;
 
             if (p > pow(2, bitSize))
                 break;

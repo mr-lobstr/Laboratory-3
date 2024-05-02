@@ -6,13 +6,6 @@
 #include "modular_arithmetic.h"
 #include "rand_func.h"
 
-enum Number_is
-{
-    composite = false,
-    prime = true
-};
-
-
 bool test_Miller (const std::vector<long long>& primeDivisors, long long n, int t);
 
 
